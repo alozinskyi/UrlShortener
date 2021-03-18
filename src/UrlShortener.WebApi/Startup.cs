@@ -23,9 +23,10 @@ namespace UrlShortener.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
 
             services.AddControllers()
                 .AddFluentValidation(options =>
@@ -41,7 +42,7 @@ namespace UrlShortener.WebApi
 
             services.AddAutoMapper(cfg => cfg.DisableConstructorMapping(), Assembly.GetExecutingAssembly());
 
-            services.AddScoped(typeof(IRepository<>), typeof(MongoDbRepository.MongoRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(MongoDbRepository<>));
             services.AddOptions<MongoDbSettings>().Bind(Configuration.GetSection(nameof(MongoDbSettings)));
 
             services.AddTransient<IShortenService, ShortenService>();
@@ -49,6 +50,8 @@ namespace UrlShortener.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSession();
+
             app.UseMiddleware<HttpStatusCodeExceptionMiddleware>();
 
             if (env.IsDevelopment())
@@ -60,8 +63,6 @@ namespace UrlShortener.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

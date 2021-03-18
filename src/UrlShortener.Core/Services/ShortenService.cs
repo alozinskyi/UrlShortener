@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UrlShortener.Core.Abstractions;
 using UrlShortener.Core.Models;
@@ -41,7 +40,7 @@ namespace UrlShortener.Core.Services
             await _urlRepository.UpdateAsync(existingUrl.Id, existingUrl);
             return existingUrl;
         }
-        
+
         private static string GetShortUrlFromId(Guid id)
         {
             return id.ToString("N").Substring(0, Constants.KeyLength);
