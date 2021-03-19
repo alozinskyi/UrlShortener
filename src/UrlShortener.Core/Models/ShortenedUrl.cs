@@ -4,12 +4,11 @@ namespace UrlShortener.Core.Models
 {
     public class ShortenedUrl : BaseEntity
     {
-        public ShortenedUrl(Guid id, string longUrl, string shortUrl)
+        public ShortenedUrl(string longUrl, string shortUrl)
         {
-            Id = id;
             LongUrl = longUrl.ToLower();
-            CreatedOn = DateTime.UtcNow;
             ShortUrl = shortUrl;
+            CreatedOn = DateTime.UtcNow;
         }
 
         public string LongUrl { get; protected set; }

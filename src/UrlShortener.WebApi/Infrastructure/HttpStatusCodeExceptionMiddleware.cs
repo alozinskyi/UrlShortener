@@ -29,7 +29,7 @@ namespace UrlShortener.WebApi.Infrastructure
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error with method {context.Request.Method} {context.Request.Path}");
+                _logger.LogError(ex, $"Problem with method {context.Request.Method} {context.Request.Path}");
                 context.Response.Clear();
                 context.Response.ContentType = Constants.DefaultMimeType;
                 var response = new ExceptionResponse(ex.Message, hostingEnvironment.IsDevelopment() ? ex.StackTrace : null);

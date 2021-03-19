@@ -16,16 +16,25 @@ namespace UrlShortener.Core.Services
 
         public async Task<string> ShortenUrl(string longUrl)
         {
-            var existingUrls = await _urlRepository.SearchFirstAsync(nameof(ShortenedUrl.LongUrl), longUrl.ToLower());
-            if (existingUrls != null)
+            var existingLongUrl = await _urlRepository.SearchFirstAsync(nameof(ShortenedUrl.LongUrl), longUrl.ToLower());
+            if (existingLongUrl != null)
             {
                 throw new InvalidOperationException($"Url {longUrl} already exists");
             }
 
-            var newId = Guid.NewGuid();
-            var shortenedUrl = new ShortenedUrl(newId, longUrl, GetShortUrlFromId(newId));
-            await _urlRepository.AddAsync(shortenedUrl);
-            return shortenedUrl.ShortUrl;
+            while (true)
+            {
+                var shortUrl = Guid.NewGuid().ToString("N").Substring(0, Constants.KeyLength);
+                var existingShortUrl = await _urlRepository.SearchFirstAsync(nameof(ShortenedUrl.ShortUrl), shortUrl);
+                if (existingShortUrl != null)
+                {
+                    continue;
+                }
+
+                var shortenedUrl = new ShortenedUrl(longUrl, shortUrl);
+                await _urlRepository.AddAsync(shortenedUrl);
+                return shortUrl;
+            }
         }
 
         public async Task<ShortenedUrl> IncreaseCounter(string shortUrl)
@@ -39,11 +48,6 @@ namespace UrlShortener.Core.Services
             existingUrl.Counter++;
             await _urlRepository.UpdateAsync(existingUrl.Id, existingUrl);
             return existingUrl;
-        }
-
-        private static string GetShortUrlFromId(Guid id)
-        {
-            return id.ToString("N").Substring(0, Constants.KeyLength);
         }
     }
 }
