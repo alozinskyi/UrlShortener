@@ -19,7 +19,7 @@ namespace UrlShortener.Core.Services
             var existingLongUrl = await _urlRepository.SearchFirstAsync(nameof(ShortenedUrl.LongUrl), longUrl.ToLower());
             if (existingLongUrl != null)
             {
-                throw new InvalidOperationException($"Url {longUrl} already exists");
+                return existingLongUrl.ShortUrl;
             }
 
             while (true)
