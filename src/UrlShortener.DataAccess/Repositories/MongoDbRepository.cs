@@ -42,13 +42,19 @@ namespace UrlShortener.DataAccess.Repositories
 
         public async Task UpdateAsync(Guid id, TEntity entity)
         {
-            await _entities.ReplaceOneAsync(e => e.Id == entity.Id, entity);
+            await _entities.ReplaceOneAsync(e => e.Id == id, entity);
         }
 
         public async Task<TEntity> SearchFirstAsync<TValue>(string fieldName, TValue value)
         {
             var filter = Builders<TEntity>.Filter.Eq(fieldName, value);
             return await _entities.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<TEntity> IncreaseFieldValueAsync<TValue>(Guid id, string fieldName, TValue value)
+        {
+            var update = Builders<TEntity>.Update.Inc(fieldName, value);
+            return await _entities.FindOneAndUpdateAsync(e => e.Id == id, update);
         }
     }
 }

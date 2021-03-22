@@ -18,5 +18,7 @@ namespace UrlShortener.Core.Abstractions
         Task<TEntity> SearchFirstAsync<TValue>(string field, TValue value);
 
         Task DeleteAsync(Guid id);
+
+        Task<TEntity> IncreaseFieldValueAsync<TValue>(Guid id, string fieldName, TValue value);
     }
 }

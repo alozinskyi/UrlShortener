@@ -45,9 +45,7 @@ namespace UrlShortener.Core.Services
                 return null;
             }
 
-            existingUrl.Counter++;
-            await _urlRepository.UpdateAsync(existingUrl.Id, existingUrl);
-            return existingUrl;
+            return await _urlRepository.IncreaseFieldValueAsync(existingUrl.Id, nameof(ShortenedUrl.Counter), 1);
         }
     }
 }
